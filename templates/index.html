@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if needs_app %}
+
+<div class="alert alert-info" role="alert">
+    You have been blasted by: <strong>{{ blaster }}</strong>
+
+    <div class="row text-right" >
+        <form action="" method="POST" novalidate formnovalidate class="btn" role="form">
+            <button type="submit" name="answer" value="a" type="button" class="btn btn-success">Accept</button>
+            <button type="submit" name="answer" value="d" type="button" class="btn btn-warning">Dispute</button>
+        </form>
+    </div>
+
+</div>
+{% endif %}
+{% if my_disputes %}
+
+    <div class="alert alert-info" role="alert">
+        Your Blast was disputed!
+
+        <div class="row text-right" >
+            <form action="" method="POST" novalidate formnovalidate class="btn" role="form">
+                <button type="submit" name="answer" value="a" type="button" class="btn btn-success">Blasted</button>
+                <button type="submit" name="answer" value="d" type="button" class="btn btn-warning">Not Blasted</button>
+            </form>
+        </div>
+
+    </div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-6">.col-md-6</div>
+    <div class="col-md-6">.col-md-6</div>
+</div>
+
+{% endblock %}
+

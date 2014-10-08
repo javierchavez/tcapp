@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="table table-striped">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>TC member</th>
+            <th>Blasts</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for user in users %}
+        {% if user.blasts|length == 10 %}
+            <tr class="danger">
+        {% else %}
+            <tr>
+        {% endif %}
+
+        <td >{{ user.username }}</td>
+        <td>{{ user.blasts|length}}</td>
+
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+</table>
+{% endblock %}
