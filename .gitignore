@@ -1,4 +1,4 @@
-.sqlite
+*.sqlite
 tccommitee.iml
 .idea
-.pyc
+*.pyc
