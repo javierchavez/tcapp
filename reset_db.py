@@ -1,17 +1,11 @@
 from __future__ import print_function
 import datetime
-
 from app.app_and_db import app, db
 from app.startup.init_app import init_app
-from app.users.models import User, UserAuth, Role
-from app.posters.models import Poster, Item, Purchase, UserPurchases
+from app.users.models import UserAuth, User, Blast, UserBlasts, ThunderStorm
 
 def reset_db(app, db):
-    """
-    Delete all tables; Create all tables; Populate roles and users.
-    """
 
-    # Drop all tables
     print('Dropping all tables')
     db.drop_all()
 
@@ -19,22 +13,11 @@ def reset_db(app, db):
     print('Creating all tables')
     db.create_all()
 
-    # Adding roles
-    print('Adding roles')
-    admin_role = Role(name='admin')
-    db.session.add(admin_role)
-
-    print('Adding inventory')
-    item = Item(title='Masters', allowed_posters=5, price=00.99, description='You get 5 posters, ability for custom urls, need 1 more feature.')
-    db.session.add(item)
-    
-    # itemfree = Item(title='Free', allowed_posters=1, price=00.00)
-    # db.session.add(itemfree)
-
     # Add users
     print('Adding users')
-    user = add_user(app, db, 'admin', 'Admin', 'User', 'admin@example.com', 'Password1')
-    user.roles.append(admin_role)
+    add_user(app, db, 'bobby', 'Bob', 'User', 'admin@example.com', 'Password1')
+    add_user(app, db, 'jony', 'John', 'User', 'admin2@example.com', 'Password1')
+    # user.roles.append(admin_role)
     db.session.commit()
 
 def add_user(app, db, username, first_name, last_name, email, password):

@@ -37,24 +37,6 @@ section {
     overflow:auto;
 }
 
-.bg-1 {
-	background: url('/static/img/bg_blueplane.jpg') no-repeat center center fixed;
-    color:#fff;
-    background-size:cover;
-}
-  
-.bg-2 {
-	background: url('/static/img/bg_suburb.jpg') no-repeat top center fixed;
-    color:#fff;
-    background-size:cover;
-}
-
-.bg-3 {
-	background: url('/static/img/bg_blueplane.jpg') no-repeat bottom center fixed;
-    color:#fff;
-    background-size:cover;
-}
-
 #footer {
     height: 60px;
     background-color:#585858;

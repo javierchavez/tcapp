@@ -9,10 +9,10 @@ def init_app(app, db, extra_config_settings={}):
     """
 
     # Initialize app config settings
-    app.config.from_object('app.startup.settings')          # Read config from 'app/startup/settings.py' file
-    app.config.update(extra_config_settings)                # Overwrite with 'extra_config_settings' parameter
+    app.config.from_object('app.startup.settings')
+    app.config.update(extra_config_settings)      
     if app.testing:
-        app.config['WTF_CSRF_ENABLED'] = False              # Disable CSRF checks while testing
+        app.config['WTF_CSRF_ENABLED'] = False    
 
     # Setup Flask-Mail
     mail = Mail(app)
@@ -20,14 +20,10 @@ def init_app(app, db, extra_config_settings={}):
     # Setup an error-logger to send emails to app.config.ADMINS
     # init_error_logger_with_email_handler(app)
     
+    from app.users.models import UserAuth, User, Blast, UserBlasts, ThunderStorm
 
-    # Setup Flask-User to handle user account related forms
-    
-    from app.users.models import UserAuth, User
-    from app.posters.models import Poster, Item, Purchase, UserPurchases, Author
     from app.users.forms import MyRegisterForm
     from app.users.views import user_profile_page
-    from app.posters.forms import PosterCreateForm, BuyPosterForm
 
     db_adapter = SQLAlchemyAdapter(db, User,        # Setup the SQLAlchemy DB Adapter
             UserAuthClass=UserAuth)                 #   using separated UserAuth/User data models
@@ -36,13 +32,9 @@ def init_app(app, db, extra_config_settings={}):
             user_profile_view_function = user_profile_page,
             )
 
-    # Load all models.py files to register db.Models with SQLAlchemy
     from app.users import models
-    from app.posters import models
-    # Load all views.py files to register @app.routes() with Flask
     from app.pages import views
     from app.users import views
-    from app.posters import views
 
     return app
 

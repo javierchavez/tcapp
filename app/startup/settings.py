@@ -5,7 +5,7 @@ import sys
 # Environment specific settings
 # *****************************
 
-APP_NAME = "PosterLynx"
+APP_NAME = "TC Committee"
 
 # The settings below can (and should) be over-ruled by OS environment variable settings
 
@@ -13,11 +13,6 @@ APP_NAME = "PosterLynx"
 SECRET_KEY = os.getenv('SECRET_KEY', '\xb9\x8d\xb5\xc2\xc4Q\xe7\x8ej\xe0\x05\xf3\xa3kp\x99l\xe7\xf2i\x00\xb1-\xcd')
 # PLEASE USE A DIFFERENT KEY FOR PRODUCTION ENVIRONMENTS!
 
-
-STRIPE_KEYS = {
-    'secret_key': os.environ['SECRET_KEY'],
-    'publishable_key': os.environ['PUBLISHABLE_KEY']
-}
 
                                                     
 # SQLAlchemy settings
@@ -41,10 +36,6 @@ if admin1: ADMINS.append(admin1)
 if admin2: ADMINS.append(admin2)
 if admin3: ADMINS.append(admin3)
 if admin4: ADMINS.append(admin4)
-
-
-static_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), os.pardir, 'static'))
-QR_IMG_PATH = os.path.join(static_path,'img')
 
 
 # ***********************************
