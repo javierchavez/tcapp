@@ -1,0 +1,27 @@
+{% extends "base_templates/page_base.html" %}  {# base_templates/page_base.html extends base_templates/base.html #}
+
+{% block main %}
+<div class="container" style="padding-top: 70px;">
+	<div class="row-fluid">
+		<h3>Pending</h3>
+		<ul class=entries>
+			{% for  item in pending %}
+				<li><p>{{ item.creater }}</p></li>
+				{% else %}
+				<li><em>Nice</em></li>
+			{% endfor %}
+		</ul>
+	</div>
+	<div class="row-fluid">
+		<h3>others</h3>
+		<ul class=entries>
+			{% for  item in other %}
+				<li><p>{{ item }}</p></li>
+				{% else %}
+				<li><em>Nice</em></li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+
+{% endblock %}
