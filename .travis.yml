@@ -1,0 +1,17 @@
+sudo: false
+language: python
+cache: pip
+
+python:
+  - "2.7"
+
+
+script:
+  - python test.py
+
+branches:
+  except:
+    - new-arch
+
+notifications:
+  email: false
