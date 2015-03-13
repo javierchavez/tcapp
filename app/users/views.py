@@ -70,5 +70,20 @@ def user_stats_page():
     users = User.query.all()
     return render_template('pages/stats_page.html', users=users)
 
+@app.route('/notifications', methods=['GET'])
+def user_notif_page():
+    # there has gotta be a better way?!
+    pend = Blast.query.filter_by(status="Pending").join(User).filter_by(email=current_user.email).values(Blast.id, Blast.creation, Blast.status, User.first_name)
+    other = Blast.query.filter(~Blast.status.contains("Pending")).join(User).filter_by(email=current_user.email)
+
+    resultlist = []
+    for id, creation, status, creater in pend:
+        resultlist.append({'creation': creation,
+                           'status': status,
+                           'creater': creater})
+
+    return render_template('pages/user_notifications_page.html', pending=resultlist, other=other)
+
+
 
 
