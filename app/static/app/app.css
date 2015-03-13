@@ -17,19 +17,8 @@
     height:50px;
 }
 */
+body,input { font-family: 'Montserrat', sans-serif;   background: #fad763;}
 
-
-
-/* navbar */
-.navbar-default {
-    background-color: transparent;
-    border-color: transparent;
-    margin-bottom: 0px;
-    position: fixed;
-    width: 100%;
-    border-radius: 0px;
-    z-index: 10007;
-}
 section {
     height:500px;
     padding-top:50px;
@@ -47,4 +36,12 @@ section {
 
 #footer a {
   color:#efefef;
+}
+
+.bg-1 {
+  background: #bbe9dc;
+}
+
+.navbar{
+    margin-bottom: 0px;
 }
