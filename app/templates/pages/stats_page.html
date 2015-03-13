@@ -1,0 +1,16 @@
+{% extends "base_templates/page_base.html" %}  {# base_templates/page_base.html extends base_templates/base.html #}
+
+{% block main %}
+<div class="container" style="padding-top: 70px;">
+	<div class="row-fluid">
+		<ul class=entries>
+			{% for user in users %}
+				<li><h2>{{ user.first_name }}</h2>{{ user.blasts|length }}</li>
+				{% else %}
+				<li><em>Unbelievable.  No entries here so far</em></li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+
+{% endblock %}
