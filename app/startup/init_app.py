@@ -20,8 +20,8 @@ def init_app(app, db, extra_config_settings={}):
     # Setup an error-logger to send emails to app.config.ADMINS
     # init_error_logger_with_email_handler(app)
     
-    from app.users.models import UserAuth, User, Blast, UserBlasts, ThunderStorm
-
+    from app.users.models import User, Blast, UserBlasts, ThunderStorm
+    
     from app.users.forms import MyRegisterForm
     from app.users.views import user_profile_page
 
