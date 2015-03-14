@@ -32,15 +32,7 @@ class User(db.Model):
         # Returns True if this is an anonymous user
         
         return False
-
-    def authenticate(self, usern, pwd):
-        user = User.query.filter_by(username=usern).first()
-        if user is not None:
-            return pbkdf2_sha256.verify(pwd, user.password)
-        else:
-            return False
-
-
+        
     # before save hash password..
     # The key needs to be different due to wtf forms. It tries to populate obj
     # over and over due to the change in its value after this function finished 
@@ -53,6 +45,18 @@ class User(db.Model):
             hashz = pbkdf2_sha256.encrypt(value, rounds=10, salt_size=16)
             self.hashed_password = hashz
 
+# user auth
+def authenticate(usern, pwd):
+    user = User.query.filter_by(username=usern).first()
+    if user is not None:
+        return user if _varify_password(pwd, user.hashed_password) else None
+    else:
+        return None
+
+def _varify_password(given, current):
+    return pbkdf2_sha256.verify(given, current)
+
+            
 class Blast(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)

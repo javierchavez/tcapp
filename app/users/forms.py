@@ -22,6 +22,7 @@ class LoginForm(Form):
                       validators=[validators.DataRequired('First name is required')])
     password = PasswordField('Password',
                              validators=[validators.DataRequired('Password is required')])
+    submit = SubmitField('Login')
 
 # Define the User profile form
 class UserProfileForm(Form):

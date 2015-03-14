@@ -1,18 +1,18 @@
-from flask import Flask, redirect, render_template, render_template_string
+from flask import Flask, redirect, render_template, render_template_string, flash
 from flask import request, url_for
 from app.app_and_db import app, db
 from app.users.forms import UserProfileForm, LoginForm, RegisterForm
-from app.users.models import User, Blast, ThunderStorm
+from app.users.models import User, Blast, ThunderStorm, authenticate
 from flask_mail import Message
 from flask_login import login_required, login_user, logout_user, current_user
 
 login_manager = app.extensions.get('login_manager', None)
-
+#login_manager.login_view = "users.login"
 
 
 @login_manager.user_loader
 def load_user(userid):
-    return User.get(int(userid))
+    return User.query.get(int(userid))
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -20,11 +20,11 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         # login and validate the user...
-        is_vaild = User.authenticate(response.form['username'], response.form['password'])
-        if (is_vaild):
+        user = authenticate(request.form['username'], request.form['password'])
+        if user is not None:
             login_user(user)
             flash("Logged in successfully.")
-            return redirect(request.args.get("next") or url_for("index"))
+            return redirect(request.args.get("next") or url_for("home_page"))
         else:
             flash("Error.")
 
@@ -39,7 +39,8 @@ def user_register_page():
         form.populate_obj(user)
         db.session.add(user)
         db.session.commit()
-        # send email confirmation 
+        # send email confirmation
+        flash("Account activation link sent to email.")
         return redirect(url_for('home_page'))
     
     return render_template('users/user_register_page.html', form=form)
@@ -52,7 +53,7 @@ def logout():
 
 
 @app.route('/user/profile', methods=['GET', 'POST'])
-
+@login_required
 def user_profile_page():
     
     form = UserProfileForm(request.form, current_user)
@@ -85,6 +86,7 @@ def user_public_profile_page(uname=None):
 
 
 @app.route('/blast', methods=['POST'])
+@login_required
 def user_blast_page():
 
     blast = Blast()
@@ -124,6 +126,7 @@ def user_stats_page():
     return render_template('pages/stats_page.html', users=users)
 
 @app.route('/notifications', methods=['GET'])
+@login_required
 def user_notif_page():
     # there has gotta be a better way?!
     pend = Blast.query.filter_by(status="Pending").join(User).filter_by(email=current_user.email).values(Blast.id, Blast.creation, Blast.status, User.first_name)
