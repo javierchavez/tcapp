@@ -75,6 +75,7 @@ def user_public_profile_page(uname=None):
 
     return render_template('users/user_public_profile_page.html', user=user)
 
+# TODO
 # for user authentication and 
 # for password reset i will use
 # https://pythonhosted.org/itsdangerous/
