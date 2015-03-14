@@ -1,11 +1,10 @@
-from flask_user.forms import RegisterForm
 from flask_wtf import Form
 from wtforms import StringField, SubmitField, validators
 
 
 # Define the User registration form
 # It augments the Flask-User RegisterForm with additional fields
-class MyRegisterForm(RegisterForm):
+class MyRegisterForm(Form):
     first_name = StringField('First name', validators=[
         validators.DataRequired('First name is required')])
     last_name = StringField('Last name', validators=[

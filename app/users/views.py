@@ -1,13 +1,12 @@
 from flask import Flask, redirect, render_template, render_template_string
 from flask import request, url_for
-from flask_user import current_user, login_required
 from app.app_and_db import app, db
 from app.users.forms import UserProfileForm
 from app.users.models import User, UserAuth, Blast, ThunderStorm
 from flask_mail import Message
 
 @app.route('/user/profile', methods=['GET', 'POST'])
-@login_required
+
 def user_profile_page():
     
     form = UserProfileForm(request.form, current_user)
@@ -31,7 +30,7 @@ def user_public_profile_page(uname=None):
     return render_template('users/user_public_profile_page.html', user=user)
 
 @app.route('/blast', methods=['POST'])
-@login_required
+
 def user_blast_page():
 
     blast = Blast()

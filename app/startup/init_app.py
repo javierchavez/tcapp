@@ -1,7 +1,7 @@
 import logging
 from logging.handlers import SMTPHandler
 from flask_mail import Mail
-from flask_user import UserManager, SQLAlchemyAdapter
+# from flask_user import UserManager, SQLAlchemyAdapter
 
 def init_app(app, db, extra_config_settings={}):
     """
@@ -25,12 +25,12 @@ def init_app(app, db, extra_config_settings={}):
     from app.users.forms import MyRegisterForm
     from app.users.views import user_profile_page
 
-    db_adapter = SQLAlchemyAdapter(db, User,        # Setup the SQLAlchemy DB Adapter
-            UserAuthClass=UserAuth)                 #   using separated UserAuth/User data models
-    user_manager = UserManager(db_adapter, app,     # Init Flask-User and bind to app
-            register_form=MyRegisterForm,           #   using a custom register form with UserProfile fields
-            user_profile_view_function = user_profile_page,
-            )
+    # db_adapter = SQLAlchemyAdapter(db, User,        # Setup the SQLAlchemy DB Adapter
+            # UserAuthClass=UserAuth)                 #   using separated UserAuth/User data models
+    # user_manager = UserManager(db_adapter, app,     # Init Flask-User and bind to app
+    #         register_form=MyRegisterForm,           #   using a custom register form with UserProfile fields
+    #         user_profile_view_function = user_profile_page,
+    #         )
 
     from app.users import models
     from app.pages import views
