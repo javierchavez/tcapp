@@ -3,12 +3,18 @@ from wtforms import StringField, SubmitField, validators, StringField, PasswordF
 
 
 
-class MyRegisterForm(Form):
+class RegisterForm(Form):
 
     first_name = StringField('First name',
                              validators=[validators.DataRequired('First name is required')])
-    last_name = StringField('Last name',
+    username = StringField('Username',
                             validators=[validators.DataRequired('Last name is required')])
+    email = StringField('Email',
+                            validators=[validators.DataRequired('Last name is required')])
+    password = PasswordField('Password',
+                             validators=[validators.DataRequired('Password is required')])
+    submit = SubmitField('Submit')
+
 
 class LoginForm(Form):
     

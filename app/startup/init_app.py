@@ -3,7 +3,6 @@ from logging.handlers import SMTPHandler
 from flask_mail import Mail
 from flask_login import LoginManager
 # from flask_user import UserManager, SQLAlchemyAdapter
-from flask_login import LoginManager
 
 
 def init_app(app, db, extra_config_settings={}):
@@ -31,7 +30,7 @@ def init_app(app, db, extra_config_settings={}):
     
     from app.users.models import User, Blast, UserBlasts, ThunderStorm
     
-    from app.users.forms import MyRegisterForm
+    from app.users.forms import RegisterForm, LoginForm
     from app.users.views import user_profile_page
 
     

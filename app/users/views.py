@@ -1,7 +1,7 @@
 from flask import Flask, redirect, render_template, render_template_string
 from flask import request, url_for
 from app.app_and_db import app, db
-from app.users.forms import UserProfileForm, LoginForm, MyRegisterForm
+from app.users.forms import UserProfileForm, LoginForm, RegisterForm
 from app.users.models import User, Blast, ThunderStorm
 from flask_mail import Message
 from flask_login import login_required, login_user, logout_user, current_user
@@ -32,7 +32,16 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def user_register_page():
-    return render_template('users/user_register_page.html')
+    form = RegisterForm(request.form)
+    
+    if request.method=='POST' and form.validate():
+        user = User()
+        form.populate_obj(user)
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('home_page'))
+    
+    return render_template('users/user_register_page.html', form=form)
 
 @app.route("/logout")
 @login_required

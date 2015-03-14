@@ -54,9 +54,9 @@
                 <p class="navbar-text">{{ current_user.first_name or current_user.user_auth.username }}</p>
                     <li><a href="#">Profile</a></li>
                 
-                    <li><a href="{{ url_for('user.logout') }}">Sign out</a></li>
+                <li><a href="{{ url_for('logout') }}">Sign out</a></li>
                 {% else %}
-                    <li><a href="{{ url_for('user.login') }}">Sign in</a></li>
+                    <li><a href="{{ url_for('login') }}">Sign in</a></li>
                 {% endif %}
               </ul>
             </li>

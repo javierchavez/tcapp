@@ -8,11 +8,10 @@ class User(db.Model):
     email = db.Column(db.String(255), nullable=False, unique=True)
     confirmed_at = db.Column(db.DateTime())
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
-    email = db.Column(db.String, primary_key=True)
-    password = db.Column(db.String)
+    #password = db.Column(db.String)
     first_name = db.Column(db.String(50), nullable=False, server_default='')
     username = db.Column(db.String(50), nullable=False, unique=True)
-
+    hashed_password = db.Column(db.String)
     # Relationships
     storms = db.relationship('ThunderStorm', backref='storms', lazy='dynamic')
     blasts = db.relationship('Blast', secondary='user_blasts', backref=db.backref('users', lazy='dynamic'))
@@ -34,14 +33,23 @@ class User(db.Model):
         return False
 
     def authenticate(self, usern, pwd):
-        
-        pbkdf2_sha256.verify(pwd, password)
+        user = User.query.filter_by(username=usern).first()
+        if user is not None:
+            return pbkdf2_sha256.verify(pwd, user.password)
+        else:
+            return False
 
-    # before save hash password
+    # before save hash password..
+    # The key needs to be different due to wtf forms. It tries to populate obj
+    # over and over due to the change in its value after this function finished 
+    # causing infinite an loop. so when the attr password tries to be set i set
+    # soething else and ignore.
     def __setattr__(self, key, value):
         super(User, self).__setattr__(key, value)
         if key == 'password':
-            self.password = pbkdf2_sha256.encrypt(value, rounds=200000, salt_size=16)
+            #pwd = self.password
+            hashz = pbkdf2_sha256.encrypt(value, rounds=10, salt_size=16)
+            self.hashed_password = hashz
 
 class Blast(db.Model):
 
