@@ -43,7 +43,7 @@ class User(db.Model):
     # The key needs to be different due to wtf forms. It tries to populate obj
     # over and over due to the change in its value after this function finished 
     # causing infinite an loop. so when the attr password tries to be set i set
-    # soething else and ignore.
+    # soething else and ignore. 
     def __setattr__(self, key, value):
         super(User, self).__setattr__(key, value)
         if key == 'password':
