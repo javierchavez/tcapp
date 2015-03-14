@@ -2,8 +2,7 @@ from flask_wtf import Form
 from wtforms import StringField, SubmitField, validators, StringField, PasswordField
 
 
-# Define the User registration form
-# It augments the Flask-User RegisterForm with additional fields
+
 class MyRegisterForm(Form):
 
     first_name = StringField('First name',
@@ -13,9 +12,9 @@ class MyRegisterForm(Form):
 
 class LoginForm(Form):
     
-    email = StringField('email',
+    username = StringField('Username',
                       validators=[validators.DataRequired('First name is required')])
-    password = PasswordField('password',
+    password = PasswordField('Password',
                              validators=[validators.DataRequired('Password is required')])
 
 # Define the User profile form

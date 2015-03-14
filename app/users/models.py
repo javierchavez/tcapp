@@ -1,5 +1,6 @@
 from app.app_and_db import db
 from datetime import datetime
+from passlib.hash import pbkdf2_sha256
 
 class User(db.Model):
 
@@ -10,6 +11,7 @@ class User(db.Model):
     email = db.Column(db.String, primary_key=True)
     password = db.Column(db.String)
     first_name = db.Column(db.String(50), nullable=False, server_default='')
+    username = db.Column(db.String(50), nullable=False, unique=True)
 
     # Relationships
     storms = db.relationship('ThunderStorm', backref='storms', lazy='dynamic')
@@ -31,6 +33,15 @@ class User(db.Model):
         
         return False
 
+    def authenticate(self, usern, pwd):
+        
+        pbkdf2_sha256.verify(pwd, password)
+
+    # before save hash password
+    def __setattr__(self, key, value):
+        super(User, self).__setattr__(key, value)
+        if key == 'password':
+            self.password = pbkdf2_sha256.encrypt(value, rounds=200000, salt_size=16)
 
 class Blast(db.Model):
 

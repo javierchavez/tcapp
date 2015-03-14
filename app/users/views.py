@@ -1,15 +1,44 @@
 from flask import Flask, redirect, render_template, render_template_string
 from flask import request, url_for
 from app.app_and_db import app, db
-from app.users.forms import UserProfileForm
+from app.users.forms import UserProfileForm, LoginForm, MyRegisterForm
 from app.users.models import User, Blast, ThunderStorm
 from flask_mail import Message
+from flask_login import login_required, login_user, logout_user, current_user
 
 login_manager = app.extensions.get('login_manager', None)
+
+
 
 @login_manager.user_loader
 def load_user(userid):
     return User.get(int(userid))
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        # login and validate the user...
+        is_vaild = User.authenticate(response.form['username'], response.form['password'])
+        if (is_vaild):
+            login_user(user)
+            flash("Logged in successfully.")
+            return redirect(request.args.get("next") or url_for("index"))
+        else:
+            flash("Error.")
+
+    return render_template("users/user_login_page.html", form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def user_register_page():
+    return render_template('users/user_register_page.html')
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home_page'))
 
 
 @app.route('/user/profile', methods=['GET', 'POST'])
