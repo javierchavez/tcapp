@@ -5,6 +5,13 @@ from app.users.forms import UserProfileForm
 from app.users.models import User, Blast, ThunderStorm
 from flask_mail import Message
 
+login_manager = app.extensions.get('login_manager', None)
+
+@login_manager.user_loader
+def load_user(userid):
+    return User.get(int(userid))
+
+
 @app.route('/user/profile', methods=['GET', 'POST'])
 
 def user_profile_page():
@@ -29,8 +36,10 @@ def user_public_profile_page(uname=None):
 
     return render_template('users/user_public_profile_page.html', user=user)
 
-@app.route('/blast', methods=['POST'])
 
+
+
+@app.route('/blast', methods=['POST'])
 def user_blast_page():
 
     blast = Blast()
