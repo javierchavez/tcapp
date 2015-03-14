@@ -6,3 +6,4 @@ app = Flask(__name__)
 
 # This is the SQLAlchemy ORM object
 db = SQLAlchemy(app)
+
