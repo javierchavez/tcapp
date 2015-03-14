@@ -39,6 +39,7 @@ def user_register_page():
         form.populate_obj(user)
         db.session.add(user)
         db.session.commit()
+        # send email confirmation 
         return redirect(url_for('home_page'))
     
     return render_template('users/user_register_page.html', form=form)
@@ -74,6 +75,11 @@ def user_public_profile_page(uname=None):
 
     return render_template('users/user_public_profile_page.html', user=user)
 
+# for user authentication and 
+# for password reset i will use
+# https://pythonhosted.org/itsdangerous/
+# auth: Signer
+# pwdrst: Timestamp
 
 
 

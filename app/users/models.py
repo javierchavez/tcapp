@@ -8,23 +8,24 @@ class User(db.Model):
     email = db.Column(db.String(255), nullable=False, unique=True)
     confirmed_at = db.Column(db.DateTime())
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
-    #password = db.Column(db.String)
     first_name = db.Column(db.String(50), nullable=False, server_default='')
     username = db.Column(db.String(50), nullable=False, unique=True)
     hashed_password = db.Column(db.String)
+    
     # Relationships
     storms = db.relationship('ThunderStorm', backref='storms', lazy='dynamic')
     blasts = db.relationship('Blast', secondary='user_blasts', backref=db.backref('users', lazy='dynamic'))
     
     # https://flask-login.readthedocs.org/en/latest/#your-user-class
     def is_active(self):
+        # a more specific type of registered user. all reg. users will be active.
         return True
 
     def get_id(self):
         return unicode(self.id)
 
     def is_authenticated(self):
-        # activated their account
+        # activated their account via email 
         return self.active
     
     def is_anonymous(self):
@@ -38,6 +39,7 @@ class User(db.Model):
             return pbkdf2_sha256.verify(pwd, user.password)
         else:
             return False
+
 
     # before save hash password..
     # The key needs to be different due to wtf forms. It tries to populate obj
