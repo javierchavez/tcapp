@@ -24,7 +24,7 @@ def login():
         if user is not None:
             login_user(user)
             flash("Logged in successfully.")
-            return redirect(request.args.get("next") or url_for("home_page"))
+            return redirect(request.args.get("next") or url_for("user_stats_page"))
         else:
             flash("Error.")
 

@@ -7,13 +7,14 @@ from passlib.hash import pbkdf2_sha256
 
 def reset_db(app, db):
 
+    
     print('Dropping all tables')
     db.drop_all()
 
     # Create all tables
     print('Creating all tables')
-    db.create_all()
 
+    db.create_all()
     # Add users
     print('Adding users')
     add_user(app, db, 'bobby', 'Bob', 'User', 'admin@example.com', 'Password1')
