@@ -52,6 +52,11 @@ class User(db.Model):
     def get_notifications(self):
         return  map(lambda u: Object(creater=User.query.get(u.creater).username, rest=u), self.blasts)
 
+    def get_blast(self, b_id):
+        to_check = Blast.query.get(b_id)
+        #if self.blasts
+        return to_check 
+    
     def get_pending(self):
         # map reduce
         mapped = map(lambda u: Object(creater=User.query.get(u.creater).username, rest=u), self.blasts)

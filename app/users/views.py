@@ -134,6 +134,13 @@ def user_notif_page():
     
     return render_template('pages/user_notifications_page.html', pending=pend, other=[])
 
-
+@app.route('/notifications/repond/<string: ans>/<int: blast_id>', methods=['POST'])
+def user_notif_resp(ans, blast_id):
+    br = current_user.get_blast(blast_id)
+    # ans needs a check to make sure it is accept/dispute.
+    br.status = ans;
+    #db.session.add(br)
+    db.commit()
+    pass
 
 
