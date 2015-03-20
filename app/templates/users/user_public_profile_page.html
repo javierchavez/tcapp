@@ -7,7 +7,7 @@
 <p>Blasts {{ user.blasts| length }} </p>
 {% if current_user != user %}
 	<form action="/blast" method="POST" class="form" role="form">
-		<input type="hidden" name="blast_user" value="{{ user.user_auth.username }}" />
+		<input type="hidden" name="blast_user" value="{{ user.username }}" />
 		<button type="submit">blast</button>
 	</form>
 {% endif %}

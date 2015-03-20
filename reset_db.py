@@ -2,17 +2,19 @@ from __future__ import print_function
 import datetime
 from app.app_and_db import app, db
 from app.startup.init_app import init_app
-from app.users.models import UserAuth, User, Blast, UserBlasts, ThunderStorm
+from app.users.models import  User, Blast, UserBlasts, ThunderStorm
+from passlib.hash import pbkdf2_sha256
 
 def reset_db(app, db):
 
+    
     print('Dropping all tables')
     db.drop_all()
 
     # Create all tables
     print('Creating all tables')
-    db.create_all()
 
+    db.create_all()
     # Add users
     print('Adding users')
     add_user(app, db, 'bobby', 'Bob', 'User', 'admin@example.com', 'Password1')
@@ -24,16 +26,17 @@ def add_user(app, db, username, first_name, last_name, email, password):
     """
     Create UserAuth and User records.
     """
-    user_auth = UserAuth(username=username, password=app.user_manager.hash_password(password))
+    password = pbkdf2_sha256.encrypt(password, rounds=10, salt_size=16) 
     user = User(
         active=True,
         first_name=first_name,
-        last_name=last_name,
+        username=username,
         email=email,
+        hashed_password=password,
         confirmed_at=datetime.datetime.now(),
-        user_auth=user_auth
+        
     )
-    db.session.add(user_auth)
+    
     db.session.add(user)
     return user
 

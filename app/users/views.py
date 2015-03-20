@@ -1,10 +1,56 @@
-from flask import Flask, redirect, render_template, render_template_string
+from flask import Flask, redirect, render_template, render_template_string, flash
 from flask import request, url_for
-from flask_user import current_user, login_required
 from app.app_and_db import app, db
-from app.users.forms import UserProfileForm
-from app.users.models import User, UserAuth, Blast, ThunderStorm
+from app.users.forms import UserProfileForm, LoginForm, RegisterForm
+from app.users.models import User, Blast, ThunderStorm, authenticate
 from flask_mail import Message
+from flask_login import login_required, login_user, logout_user, current_user
+
+login_manager = app.extensions.get('login_manager', None)
+#login_manager.login_view = "users.login"
+
+
+@login_manager.user_loader
+def load_user(userid):
+    return User.query.get(int(userid))
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        # login and validate the user...
+        user = authenticate(request.form['username'], request.form['password'])
+        if user is not None:
+            login_user(user)
+            flash("Logged in successfully.")
+            return redirect(request.args.get("next") or url_for("user_stats_page"))
+        else:
+            flash("Error.")
+
+    return render_template("users/user_login_page.html", form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def user_register_page():
+    form = RegisterForm(request.form)
+    
+    if request.method=='POST' and form.validate():
+        user = User()
+        form.populate_obj(user)
+        db.session.add(user)
+        db.session.commit()
+        # send email confirmation
+        flash("Account activation link sent to email.")
+        return redirect(url_for('home_page'))
+    
+    return render_template('users/user_register_page.html', form=form)
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home_page'))
+
 
 @app.route('/user/profile', methods=['GET', 'POST'])
 @login_required
@@ -23,12 +69,21 @@ def user_profile_page():
 @app.route('/u/<uname>', methods=['GET'])
 def user_public_profile_page(uname=None):
 
-    user=User.query.join(UserAuth).filter_by(username=uname).first()
-
+    #user=User.query.join(UserAuth).filter_by(username=uname).first()
+    user = User.query.filter_by(username=uname).first()
     if user is None:
         return "Nonthing here"
 
     return render_template('users/user_public_profile_page.html', user=user)
+
+# TODO
+# for user authentication and 
+# for password reset i will use
+# https://pythonhosted.org/itsdangerous/
+# auth: Signer
+# pwdrst: Timestamp
+
+
 
 @app.route('/blast', methods=['POST'])
 @login_required
@@ -36,7 +91,8 @@ def user_blast_page():
 
     blast = Blast()
     blast.creater = current_user.id
-    user=User.query.join(UserAuth).filter_by(username=request.form['blast_user']).first()
+    #user=User.query.join(UserAuth).filter_by(username=request.form['blast_user']).first()
+    user = User.query.filter_by(username=request.form['blast_user']).first()
     user.blasts.append(blast)
     
     # this needs to be done after blast is no longer pending
@@ -71,19 +127,21 @@ def user_stats_page():
     return render_template('pages/stats_page.html', users=users)
 
 @app.route('/notifications', methods=['GET'])
+@login_required
 def user_notif_page():
-    # there has gotta be a better way?!
-    pend = Blast.query.filter_by(status="Pending").join(User).filter_by(email=current_user.email).values(Blast.id, Blast.creation, Blast.status, User.first_name)
-    other = Blast.query.filter(~Blast.status.contains("Pending")).join(User).filter_by(email=current_user.email)
+    
+    pend = current_user.get_notifications()
+    
+    return render_template('pages/user_notifications_page.html', pending=pend, other=[])
 
-    resultlist = []
-    for id, creation, status, creater in pend:
-        resultlist.append({'creation': creation,
-                           'status': status,
-                           'creater': creater})
-
-    return render_template('pages/user_notifications_page.html', pending=resultlist, other=other)
-
-
+@app.route('/notifications/repond/', methods=['POST'])
+def user_notif_resp(ans, blast_id):
+    # get from form instead.
+    br = current_user.get_blast(blast_id)
+    # ans needs a check to make sure it is accept/dispute.
+    br.status = ans;
+    #db.session.add(br)
+    db.commit()
+    pass
 
 
