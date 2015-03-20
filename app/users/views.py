@@ -69,8 +69,8 @@ def user_profile_page():
 @app.route('/u/<uname>', methods=['GET'])
 def user_public_profile_page(uname=None):
 
-    user=User.query.join(UserAuth).filter_by(username=uname).first()
-
+    #user=User.query.join(UserAuth).filter_by(username=uname).first()
+    user = User.query.filter_by(username=uname).first()
     if user is None:
         return "Nonthing here"
 
@@ -91,7 +91,8 @@ def user_blast_page():
 
     blast = Blast()
     blast.creater = current_user.id
-    user=User.query.join(UserAuth).filter_by(username=request.form['blast_user']).first()
+    #user=User.query.join(UserAuth).filter_by(username=request.form['blast_user']).first()
+    user = User.query.filter_by(username=request.form['blast_user']).first()
     user.blasts.append(blast)
     
     # this needs to be done after blast is no longer pending
@@ -128,17 +129,10 @@ def user_stats_page():
 @app.route('/notifications', methods=['GET'])
 @login_required
 def user_notif_page():
-    # there has gotta be a better way?!
-    pend = Blast.query.filter_by(status="Pending").join(User).filter_by(email=current_user.email).values(Blast.id, Blast.creation, Blast.status, User.first_name)
-    other = Blast.query.filter(~Blast.status.contains("Pending")).join(User).filter_by(email=current_user.email)
-
-    resultlist = []
-    for id, creation, status, creater in pend:
-        resultlist.append({'creation': creation,
-                           'status': status,
-                           'creater': creater})
-
-    return render_template('pages/user_notifications_page.html', pending=resultlist, other=other)
+    
+    pend = current_user.get_notifications()
+    
+    return render_template('pages/user_notifications_page.html', pending=pend, other=[])
 
 
 

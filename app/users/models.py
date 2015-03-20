@@ -1,12 +1,24 @@
-from app.app_and_db import db
+from app.app_and_db import db, app
 from datetime import datetime
 from passlib.hash import pbkdf2_sha256
+from pytz import timezone
+
+
+def get_dt():
+    '''Return the time at given timezone in utc'''
+    # Current time in UTC
+    now_utc = datetime.now(timezone('UTC'))
+    return  now_utc.astimezone(timezone('US/Mountain')).strftime("%Y-%m-%d %H:%M:%S %Z%z")
+
+class Object:
+    def __init__(self, **kwds):
+        self.__dict__.update(kwds)
 
 class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), nullable=False, unique=True)
-    confirmed_at = db.Column(db.DateTime())
+    confirmed_at = db.Column(db.DateTime)
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
     first_name = db.Column(db.String(50), nullable=False, server_default='')
     username = db.Column(db.String(50), nullable=False, unique=True)
@@ -14,7 +26,10 @@ class User(db.Model):
     
     # Relationships
     storms = db.relationship('ThunderStorm', backref='storms', lazy='dynamic')
-    blasts = db.relationship('Blast', secondary='user_blasts', backref=db.backref('users', lazy='dynamic'))
+    blasts = db.relationship('Blast',
+                             secondary='user_blasts',
+                             backref=db.backref('users', lazy='dynamic'),
+                             order_by='Blast.creation')
     
     # https://flask-login.readthedocs.org/en/latest/#your-user-class
     def is_active(self):
@@ -26,18 +41,32 @@ class User(db.Model):
 
     def is_authenticated(self):
         # activated their account via email 
+        # dont want to worry about email when testing
+        if app.debug: return True
         return self.active
     
     def is_anonymous(self):
         # Returns True if this is an anonymous user
-        
-        return False
-        
+        return not self.active
+
+    def get_notifications(self):
+        return  map(lambda u: Object(creater=User.query.get(u.creater).username, rest=u), self.blasts)
+
+    def get_pending(self):
+        # map reduce
+        mapped = map(lambda u: Object(creater=User.query.get(u.creater).username, rest=u), self.blasts)
+        return filter(lambda x: x.rest.status == "Pending", mapped)
+
+    def get_pending_len(self):
+        return len(filter(lambda x: x.status == "Pending", self.blasts))
+    
     # before save hash password..
-    # The key needs to be different due to wtf forms. It tries to populate obj
-    # over and over due to the change in its value after this function finished 
-    # causing infinite an loop. so when the attr password tries to be set i set
-    # soething else and ignore. 
+    # The key needs to be different than what attribute you are changing. More specifically,
+    # wtf forms gets all the attributes supplied in the form, it then recursivly sets attributes
+    # while they dont match. so If we supply a password field and hash it and save it then wtf
+    # forms is going to see its different call __setattr__ again and a infinite loops continues,
+    #because we are setting a hash and wtf it trying to set it. so I just look when wtf forms
+    # tries to set a field called password and set some other field I didnt supply.
     def __setattr__(self, key, value):
         super(User, self).__setattr__(key, value)
         if key == 'password':
@@ -60,7 +89,7 @@ def _varify_password(given, current):
 class Blast(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    creation = db.Column(db.DateTime, nullable=False, default=datetime.today())
+    creation = db.Column(db.DateTime, nullable=False, default=get_dt())
     status = db.Column(db.String(), nullable=False, default="Pending")
     creater = db.Column(db.Integer, db.ForeignKey('user.id'))
 
@@ -75,7 +104,7 @@ class UserBlasts(db.Model):
 class ThunderStorm(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
-    creation = db.Column(db.DateTime, nullable=False, default=datetime.today())
+    creation = db.Column(db.DateTime, nullable=False, default=get_dt())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     status = db.Column(db.String(), nullable=False, default="Pending")
 
