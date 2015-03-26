@@ -94,7 +94,7 @@ def _varify_password(given, current):
 class Blast(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    creation = db.Column(db.DateTime, nullable=False, default=get_dt())
+    creation = db.Column(db.DateTime)
     status = db.Column(db.String(), nullable=False, default="Pending")
     creater = db.Column(db.Integer, db.ForeignKey('user.id'))
 
@@ -109,7 +109,7 @@ class UserBlasts(db.Model):
 class ThunderStorm(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
-    creation = db.Column(db.DateTime, nullable=False, default=get_dt())
+    creation = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     status = db.Column(db.String(), nullable=False, default="Pending")
 

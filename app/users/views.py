@@ -99,6 +99,7 @@ def user_blast_page():
     # if len(user.blasts) == 5:
     #     ts = ThunderStorm()
     #     user.storms.append(ts)
+    # notify everyone.
 
     db.session.add(user)
     db.session.commit()

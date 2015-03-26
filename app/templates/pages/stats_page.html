@@ -2,14 +2,15 @@
 
 {% block main %}
 
-	<div class="row-fluid">
-		<ul class=entries>
-			{% for user in users %}
-				<li><h2>{{ user.first_name }}</h2>{{ user.blasts|length }}</li>
-				{% else %}
-				<li><em>Unbelievable.  No entries here so far</em></li>
-			{% endfor %}
-		</ul>
-	</div>
+<div class="row-fluid">
+  <ul class=entries>
+    {% for user in users %}
+    <li><h2><a href="{{ url_for('user_public_profile_page', uname=user.username) }}">{{user.first_name}}</a></h2>Blasts: {{ user.blasts|length}}
+    </li>
+    {% else %}
+    <li><em>Unbelievable.  No entries here so far</em></li>
+    {% endfor %}
+  </ul>
+</div>
 
 {% endblock %}
