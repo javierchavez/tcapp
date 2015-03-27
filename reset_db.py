@@ -2,7 +2,8 @@ from __future__ import print_function
 import datetime
 from app.app_and_db import app, db
 from app.startup.init_app import init_app
-from app.users.models import  User, Blast, UserBlasts, ThunderStorm
+from app.users.models import  User
+from app.tc.models import Blast, UserBlasts, ThunderStorm
 from passlib.hash import pbkdf2_sha256
 
 def reset_db(app, db):

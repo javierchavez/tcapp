@@ -2,7 +2,7 @@ from app.app_and_db import db, app
 from datetime import datetime
 from passlib.hash import pbkdf2_sha256
 from pytz import timezone
-
+from app.tc.models import Blast
 
 def get_dt():
     '''Return the time at given timezone in utc'''
@@ -25,11 +25,17 @@ class User(db.Model):
     hashed_password = db.Column(db.String)
     
     # Relationships
+    # user has many messages
+    # user has many storms
     storms = db.relationship('ThunderStorm', backref='storms', lazy='dynamic')
+    # user has many blasts
     blasts = db.relationship('Blast',
                              secondary='user_blasts',
                              backref=db.backref('users', lazy='dynamic'),
                              order_by='Blast.creation')
+    conversations = db.relationship('Conversation',
+                                    secondary='user_conversations',
+                                    backref=db.backref('users', lazy='dynamic'))
     
     # https://flask-login.readthedocs.org/en/latest/#your-user-class
     def is_active(self):
@@ -89,28 +95,4 @@ def authenticate(usern, pwd):
 
 def _varify_password(given, current):
     return pbkdf2_sha256.verify(given, current)
-
-            
-class Blast(db.Model):
-
-    id = db.Column(db.Integer, primary_key=True)
-    creation = db.Column(db.DateTime)
-    status = db.Column(db.String(), nullable=False, default="Pending")
-    creater = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-
-class UserBlasts(db.Model):
-
-    id = db.Column(db.Integer(), primary_key=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey('user.id', ondelete='CASCADE'))
-    blast_id = db.Column(db.Integer(), db.ForeignKey('blast.id', ondelete='CASCADE'))
-    
-
-class ThunderStorm(db.Model):
-    
-    id = db.Column(db.Integer, primary_key=True)
-    creation = db.Column(db.DateTime)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    status = db.Column(db.String(), nullable=False, default="Pending")
-
 

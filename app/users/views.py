@@ -2,7 +2,8 @@ from flask import Flask, redirect, render_template, render_template_string, flas
 from flask import request, url_for
 from app.app_and_db import app, db
 from app.users.forms import UserProfileForm, LoginForm, RegisterForm
-from app.users.models import User, Blast, ThunderStorm, authenticate
+from app.users.models import User, authenticate
+from app.tc.models import Blast, ThunderStorm
 from flask_mail import Message
 from flask_login import login_required, login_user, logout_user, current_user
 
