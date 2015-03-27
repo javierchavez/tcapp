@@ -6,4 +6,4 @@ init_app(app, db)
 
 
 if __name__ == "__main__":
-    app.run(host="192.168.0.2", port=8003, debug=True)
+    app.run(port=8003, debug=True)
