@@ -32,8 +32,8 @@ def init_app(app, db, extra_config_settings={}):
     from app.tc.models import Blast, UserBlasts, ThunderStorm
     from app.messages.models import Conversation, Message, UserConversations
     from app.users.forms import RegisterForm, LoginForm
-    from app.users.views import user_profile_page
-
+    from app.users.views import user_profile_page, load_user
+    from app.tc.views import user_blast_page
     
     # db_adapter = SQLAlchemyAdapter(db, User,        # Setup the SQLAlchemy DB Adapter
             # UserAuthClass=UserAuth)                 #   using separated UserAuth/User data models
